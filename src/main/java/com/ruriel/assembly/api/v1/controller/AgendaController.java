@@ -1,8 +1,8 @@
-package com.ruriel.assembly.api.controller.v1;
+package com.ruriel.assembly.api.v1.controller;
 
-import com.ruriel.assembly.api.dto.AgendaPaginatedResponse;
-import com.ruriel.assembly.api.dto.AgendaRequest;
-import com.ruriel.assembly.api.dto.AgendaResponse;
+import com.ruriel.assembly.api.v1.resource.AgendaPaginatedResponse;
+import com.ruriel.assembly.api.v1.resource.AgendaRequest;
+import com.ruriel.assembly.api.v1.resource.AgendaResponse;
 import com.ruriel.assembly.entity.Agenda;
 import com.ruriel.assembly.service.AgendaService;
 import org.modelmapper.ModelMapper;

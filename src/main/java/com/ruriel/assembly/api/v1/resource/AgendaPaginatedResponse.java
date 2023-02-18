@@ -1,4 +1,4 @@
-package com.ruriel.assembly.api.dto;
+package com.ruriel.assembly.api.v1.resource;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,9 +12,7 @@ import java.util.List;
 public class AgendaPaginatedResponse {
     private int number;
     private int size;
-
     private int totalPages;
-
     private List<AgendaResponse> content;
 
 }
