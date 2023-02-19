@@ -1,7 +1,8 @@
-package com.ruriel.assembly.service;
+package com.ruriel.assembly.services;
 
-import com.ruriel.assembly.entity.Agenda;
-import com.ruriel.assembly.repository.AgendaRepository;
+import com.ruriel.assembly.api.exceptions.AgendaNotFoundException;
+import com.ruriel.assembly.entities.Agenda;
+import com.ruriel.assembly.repositories.AgendaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +18,12 @@ public class AgendaService {
     @Autowired
     private AgendaRepository agendaRepository;
 
-    public Page<Agenda> findPage(Pageable pageable){
+    private final String AGENDA_NOT_FOUND = "No agenda with id %d found.";
+    public Page<Agenda> findPage(Pageable pageable) {
         return agendaRepository.findByEnabled(true, pageable);
     }
-    public Agenda create(Agenda agenda){
+
+    public Agenda create(Agenda agenda) {
         var now = Date.from(Instant.now());
         agenda.setEnabled(true);
         agenda.setVotingSessions(new HashSet<>());
@@ -28,27 +31,28 @@ public class AgendaService {
         return agendaRepository.save(agenda);
     }
 
-    public Optional<Agenda> findById(Long id){
-        return agendaRepository.findById(id);
+    public Agenda findById(Long id) {
+        return agendaRepository.findById(id)
+                .orElseThrow(() -> new AgendaNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
     }
-    public Boolean update(Long id, Agenda agenda){
+
+    public Agenda update(Long id, Agenda agenda) {
         return agendaRepository.findById(id).map(current -> {
             var now = Date.from(Instant.now());
             current.setDescription(agenda.getDescription());
             current.setName(agenda.getName());
             current.setUpdatedAt(now);
-            agendaRepository.save(current);
-            return true;
-        }).orElse(false);
+            return agendaRepository.save(current);
+        }).orElseThrow(() -> new AgendaNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
+
     }
 
-    public Boolean disable(Long id){
+    public Agenda disable(Long id) {
         return agendaRepository.findById(id).map(current -> {
             var now = Date.from(Instant.now());
             current.setEnabled(false);
             current.setUpdatedAt(now);
-            agendaRepository.save(current);
-            return true;
-        }).orElse(false);
+            return agendaRepository.save(current);
+        }).orElseThrow(() -> new AgendaNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
     }
 }

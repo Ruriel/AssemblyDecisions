@@ -1,4 +1,4 @@
-package com.ruriel.assembly.api.v1.resource;
+package com.ruriel.assembly.api.v1.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

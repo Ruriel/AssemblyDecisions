@@ -1,13 +1,13 @@
-package com.ruriel.assembly.api.v1.controller;
+package com.ruriel.assembly.api.v1.controllers;
 
-import com.ruriel.assembly.api.v1.resource.AgendaPaginatedResponse;
-import com.ruriel.assembly.api.v1.resource.AgendaRequest;
-import com.ruriel.assembly.api.v1.resource.AgendaResponse;
-import com.ruriel.assembly.entity.Agenda;
-import com.ruriel.assembly.service.AgendaService;
+import com.ruriel.assembly.api.v1.resources.AgendaPaginatedResponse;
+import com.ruriel.assembly.api.v1.resources.AgendaRequest;
+import com.ruriel.assembly.api.v1.resources.AgendaResponse;
+import com.ruriel.assembly.entities.Agenda;
+import com.ruriel.assembly.services.AgendaService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/agenda")
+@RequestMapping( value ="/agenda", produces = "application/vnd.assembly.api.v1+json")
 public class AgendaController {
     @Autowired
     private AgendaService agendaService;
@@ -31,16 +31,13 @@ public class AgendaController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        return agendaService.findById(id)
-                .map(agenda -> {
-                    var agendaResponse = modelMapper.map(agenda, AgendaResponse.class);
-                    return ResponseEntity.ok(agendaResponse);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        var agenda = agendaService.findById(id);
+        var agendaResponse = modelMapper.map(agenda, AgendaResponse.class);
+        return ResponseEntity.ok(agendaResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody AgendaRequest agendaRequest){
+    public ResponseEntity<?> create(@RequestBody @Valid AgendaRequest agendaRequest){
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         var savedAgenda = agendaService.create(agenda);
         var responseBody = modelMapper.map(savedAgenda, AgendaResponse.class);
@@ -48,13 +45,15 @@ public class AgendaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AgendaRequest agendaRequest){
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest){
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
-        return agendaService.update(id, agenda) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        agendaService.update(id, agenda);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id){
-        return agendaService.disable(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        agendaService.disable(id);
+        return ResponseEntity.ok().build();
     }
 }

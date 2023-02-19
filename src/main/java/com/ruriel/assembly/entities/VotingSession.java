@@ -1,4 +1,4 @@
-package com.ruriel.assembly.entity;
+package com.ruriel.assembly.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
