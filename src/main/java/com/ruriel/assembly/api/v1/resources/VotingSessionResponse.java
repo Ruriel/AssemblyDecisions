@@ -10,12 +10,20 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VotingSessionRequest {
-    @NotBlank
+public class VotingSessionResponse {
+
+    private Long id;
     private Long agendaId;
 
-    @NotBlank
     private Date startsAt;
 
     private Date endsAt;
+
+    private Long totalVotes;
+
+    private Long yesVotes;
+
+    private Long noVotes;
+
+    private String result;
 }

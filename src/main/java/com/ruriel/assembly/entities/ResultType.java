@@ -1,5 +1,5 @@
 package com.ruriel.assembly.entities;
 
 public enum ResultType {
-    YES, NO, DRAW
+    COUNTING, DRAW, YES, NO, NOT_STARTED
 }

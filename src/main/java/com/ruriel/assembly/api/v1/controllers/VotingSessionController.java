@@ -1,9 +1,10 @@
 package com.ruriel.assembly.api.v1.controllers;
 
-import com.ruriel.assembly.api.v1.resources.*;
-import com.ruriel.assembly.entities.Agenda;
-import com.ruriel.assembly.entities.Associate;
-import com.ruriel.assembly.services.AssociateService;
+import com.ruriel.assembly.api.v1.resources.PaginatedResponse;
+import com.ruriel.assembly.api.v1.resources.VotingSessionRequest;
+import com.ruriel.assembly.api.v1.resources.VotingSessionResponse;
+import com.ruriel.assembly.entities.VotingSession;
+import com.ruriel.assembly.services.VotingSessionService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -14,52 +15,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
-@RequestMapping(value = "/associate", produces = "application/vnd.assembly.api.v1+json")
-public class AssociateController {
+@RequestMapping(value = "/votingSession", produces = "application/vnd.assembly.api.v1+json")
+public class VotingSessionController {
     @Autowired
-    private AssociateService associateService;
+    private VotingSessionService votingSessionService;
 
     @Autowired
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
-        var page = associateService.findPage(pageable);
-        var typeToken = new TypeToken<PaginatedResponse<AssociateResponse>>() {
+    public ResponseEntity<?> findPage(@PageableDefault(sort = {"startsAt"}) Pageable pageable) {
+        var page = votingSessionService.findPage(pageable);
+        var typeToken = new TypeToken<PaginatedResponse<VotingSessionResponse>>() {
         }.getType();
-        var associatePaginatedResponse = modelMapper.map(page, typeToken);
-        return ResponseEntity.ok(associatePaginatedResponse);
+        var votingSessionPaginatedResponse = modelMapper.map(page, typeToken);
+        return ResponseEntity.ok(votingSessionPaginatedResponse);
 
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        var associate = associateService.findById(id);
-        var associateResponse = modelMapper.map(associate, AssociateResponse.class);
-        return ResponseEntity.ok(associateResponse);
+        var votingSession = votingSessionService.findById(id);
+        var votingSessionResponse = modelMapper.map(votingSession, VotingSessionResponse.class);
+        return ResponseEntity.ok(votingSessionResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid AssociateRequest associateRequest) {
-        var associate = modelMapper.map(associateRequest, Associate.class);
-        var savedAssociate = associateService.create(associate);
-        var responseBody = modelMapper.map(savedAssociate, AssociateResponse.class);
+    public ResponseEntity<?> create(@RequestBody @Valid VotingSessionRequest votingSessionRequest) {
+        var votingSession = modelMapper.map(votingSessionRequest, VotingSession.class);
+        var savedVotingSession = votingSessionService.create(votingSession);
+        var responseBody = modelMapper.map(savedVotingSession, VotingSessionResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AssociateRequest associateRequest) {
-        var associate = modelMapper.map(associateRequest, Associate.class);
-        associateService.update(id, associate);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> disable(@PathVariable Long id) {
-        associateService.disable(id);
-        return ResponseEntity.ok().build();
-    }
 }

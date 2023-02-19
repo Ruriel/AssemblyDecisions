@@ -1,1 +1,1 @@
-INSERT INTO AGENDA(id, name, description, enabled, created_at) VALUES (1, "Agenda 1", "First agenda of the week.", true, current_timestamp);
+INSERT INTO AGENDA(id, name, description, enabled, created_at) VALUES (1, 'Agenda 1', 'First agenda of the week.', true, current_timestamp);

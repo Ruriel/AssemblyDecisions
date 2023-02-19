@@ -1,6 +1,7 @@
 package com.ruriel.assembly.configuration;
 
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,11 @@ public class ExceptionHandlers {
                 .body(body);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<?> handle(EntityNotFoundException exception) {
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(body);
+    }
 
 }

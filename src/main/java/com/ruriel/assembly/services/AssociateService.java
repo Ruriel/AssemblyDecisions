@@ -17,15 +17,13 @@ public class AssociateService {
     @Autowired
     private AssociateRepository associateRepository;
 
-    private final String ASSOCIATE_NOT_FOUND = "No associate with id %d found.";
+    private static final String ASSOCIATE_NOT_FOUND = "No associate with id %d found.";
     public Page<Associate> findPage(Pageable pageable) {
         return associateRepository.findByEnabled(true, pageable);
     }
 
     public Associate create(Associate associate) {
-        var now = Date.from(Instant.now());
         associate.setEnabled(true);
-        associate.setCreatedAt(now);
         return associateRepository.save(associate);
     }
 
@@ -36,10 +34,8 @@ public class AssociateService {
 
     public Associate update(Long id, Associate associate) {
         return associateRepository.findById(id).map(current -> {
-            var now = Date.from(Instant.now());
             current.setName(associate.getName());
             current.setDocument(associate.getDocument());
-            current.setUpdatedAt(now);
             return associateRepository.save(current);
         }).orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
 
@@ -47,9 +43,7 @@ public class AssociateService {
 
     public Associate disable(Long id) {
         return associateRepository.findById(id).map(current -> {
-            var now = Date.from(Instant.now());
             current.setEnabled(false);
-            current.setUpdatedAt(now);
             return associateRepository.save(current);
         }).orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
     }

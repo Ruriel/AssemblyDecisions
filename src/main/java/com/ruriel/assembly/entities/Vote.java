@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
 
 @Entity
 @Data
@@ -25,4 +28,8 @@ public class Vote {
     @ManyToOne
     @JoinColumn(name="voting_session_id", nullable=false)
     private VotingSession votingSession;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private Date createdAt;
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -22,7 +24,10 @@ public class Associate {
     private String document;
     private Boolean enabled;
 
+    @CreationTimestamp
+    @Column(nullable = false)
     private Date createdAt;
 
+    @UpdateTimestamp
     private Date updatedAt;
 }
