@@ -8,11 +8,14 @@ import com.ruriel.assembly.service.AgendaService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/v1/agenda")
+@RestController
+@RequestMapping("/v1/agenda")
 public class AgendaController {
     @Autowired
     private AgendaService agendaService;
@@ -21,8 +24,8 @@ public class AgendaController {
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> findPage(@RequestParam PageRequest pageRequest){
-        var page = agendaService.findPage(pageRequest);
+    public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable){
+        var page = agendaService.findPage(pageable);
         var agendaPaginatedResponse = modelMapper.map(page, AgendaPaginatedResponse.class);
         return ResponseEntity.ok(agendaPaginatedResponse);
     }
@@ -37,7 +40,7 @@ public class AgendaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(AgendaRequest agendaRequest){
+    public ResponseEntity<?> create(@RequestBody AgendaRequest agendaRequest){
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         var savedAgenda = agendaService.create(agenda);
         var responseBody = modelMapper.map(savedAgenda, AgendaResponse.class);
@@ -45,8 +48,13 @@ public class AgendaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, AgendaRequest agendaRequest){
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AgendaRequest agendaRequest){
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         return agendaService.update(id, agenda) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id){
+        return agendaService.disable(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

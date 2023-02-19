@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "associate_id", "voting_session_id" }) })
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String associate;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "associate_id")
+    private Associate associate;
 
     @Column(nullable = false)
     private Boolean content;

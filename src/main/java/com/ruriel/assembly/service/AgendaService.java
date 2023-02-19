@@ -18,7 +18,7 @@ public class AgendaService {
     private AgendaRepository agendaRepository;
 
     public Page<Agenda> findPage(Pageable pageable){
-        return agendaRepository.findAll(pageable);
+        return agendaRepository.findByEnabled(true, pageable);
     }
     public Agenda create(Agenda agenda){
         var now = Date.from(Instant.now());
