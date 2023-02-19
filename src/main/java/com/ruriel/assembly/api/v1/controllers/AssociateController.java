@@ -1,10 +1,9 @@
 package com.ruriel.assembly.api.v1.controllers;
 
-import com.ruriel.assembly.api.v1.resources.AgendaRequest;
-import com.ruriel.assembly.api.v1.resources.AgendaResponse;
-import com.ruriel.assembly.api.v1.resources.PaginatedResponse;
+import com.ruriel.assembly.api.v1.resources.*;
 import com.ruriel.assembly.entities.Agenda;
-import com.ruriel.assembly.services.AgendaService;
+import com.ruriel.assembly.entities.Associate;
+import com.ruriel.assembly.services.AssociateService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -15,47 +14,52 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping( value ="/agenda", produces = "application/vnd.assembly.api.v1+json")
-public class AgendaController {
+@RequestMapping(value = "/associate", produces = "application/vnd.assembly.api.v1+json")
+public class AssociateController {
     @Autowired
-    private AgendaService agendaService;
+    private AssociateService associateService;
 
     @Autowired
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable){
-        var page = agendaService.findPage(pageable);
-        var typeToken = new TypeToken<PaginatedResponse<AgendaResponse>>() {}.getType();
-        var agendaPaginatedResponse = modelMapper.map(page, typeToken);
-        return ResponseEntity.ok(agendaPaginatedResponse);
+    public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
+        var page = associateService.findPage(pageable);
+        var typeToken = new TypeToken<PaginatedResponse<AssociateResponse>>() {
+        }.getType();
+        var associatePaginatedResponse = modelMapper.map(page, typeToken);
+        return ResponseEntity.ok(associatePaginatedResponse);
+
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        var agenda = agendaService.findById(id);
-        var agendaResponse = modelMapper.map(agenda, AgendaResponse.class);
-        return ResponseEntity.ok(agendaResponse);
+        var associate = associateService.findById(id);
+        var associateResponse = modelMapper.map(associate, AssociateResponse.class);
+        return ResponseEntity.ok(associateResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid AgendaRequest agendaRequest){
-        var agenda = modelMapper.map(agendaRequest, Agenda.class);
-        var savedAgenda = agendaService.create(agenda);
-        var responseBody = modelMapper.map(savedAgenda, AgendaResponse.class);
+    public ResponseEntity<?> create(@RequestBody @Valid AssociateRequest associateRequest) {
+        var associate = modelMapper.map(associateRequest, Associate.class);
+        var savedAssociate = associateService.create(associate);
+        var responseBody = modelMapper.map(savedAssociate, AssociateResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest){
-        var agenda = modelMapper.map(agendaRequest, Agenda.class);
-        agendaService.update(id, agenda);
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AssociateRequest associateRequest) {
+        var associate = modelMapper.map(associateRequest, Associate.class);
+        associateService.update(id, associate);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id){
-        agendaService.disable(id);
+    public ResponseEntity<?> disable(@PathVariable Long id) {
+        associateService.disable(id);
         return ResponseEntity.ok().build();
     }
 }

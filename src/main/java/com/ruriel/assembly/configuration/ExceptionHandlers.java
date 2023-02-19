@@ -1,6 +1,7 @@
 package com.ruriel.assembly.configuration;
 
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @ControllerAdvice
@@ -26,4 +28,15 @@ public class ExceptionHandlers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(body);
     }
+    @ExceptionHandler
+    public ResponseEntity<?> handle(ConstraintViolationException exception) {
+        var message = Arrays.stream(exception.getCause().getMessage().split(":"))
+                .findFirst()
+                .orElse(exception.getMessage());
+        var body = Map.of("error", message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
+
+
 }
