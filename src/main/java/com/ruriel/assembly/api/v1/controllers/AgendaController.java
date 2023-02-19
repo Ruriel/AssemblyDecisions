@@ -1,12 +1,13 @@
 package com.ruriel.assembly.api.v1.controllers;
 
-import com.ruriel.assembly.api.v1.resources.AgendaPaginatedResponse;
 import com.ruriel.assembly.api.v1.resources.AgendaRequest;
 import com.ruriel.assembly.api.v1.resources.AgendaResponse;
+import com.ruriel.assembly.api.v1.resources.PaginatedResponse;
 import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.services.AgendaService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,7 +27,8 @@ public class AgendaController {
     @GetMapping
     public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable){
         var page = agendaService.findPage(pageable);
-        var agendaPaginatedResponse = modelMapper.map(page, AgendaPaginatedResponse.class);
+        var typeToken = new TypeToken<PaginatedResponse<AgendaResponse>>() {}.getType();
+        var agendaPaginatedResponse = modelMapper.map(page, typeToken);
         return ResponseEntity.ok(agendaPaginatedResponse);
     }
     @GetMapping("/{id}")

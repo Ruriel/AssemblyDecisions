@@ -9,10 +9,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AgendaPaginatedResponse {
+public class PaginatedResponse<T> {
     private int number;
     private int size;
     private int totalPages;
-    private List<AgendaResponse> content;
-
+    private List<T> content;
 }

@@ -1,6 +1,6 @@
 package com.ruriel.assembly.configuration;
 
-import com.ruriel.assembly.api.exceptions.AgendaNotFoundException;
+import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -21,7 +21,7 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> handle(AgendaNotFoundException exception) {
+    public ResponseEntity<?> handle(ResourceNotFoundException exception) {
         var body = Map.of("error", exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(body);
