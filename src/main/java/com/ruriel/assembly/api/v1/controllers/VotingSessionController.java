@@ -66,11 +66,4 @@ public class VotingSessionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    @PatchMapping("/{id}/vote/{voteId}")
-    public ResponseEntity<?> updateVote(@PathVariable Long id, @PathVariable Long voteId, @RequestBody @Valid VotePatchRequest votePatchRequest){
-        var vote = modelMapper.map(votePatchRequest, Vote.class);
-        var updatedVote = voteService.patch(id, voteId, vote);
-        var responseBody = modelMapper.map(updatedVote, VoteResponse.class);
-        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-    }
 }

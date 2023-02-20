@@ -14,7 +14,6 @@ import java.time.Instant;
 
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATED_VOTED_ALREADY;
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_REGISTERED;
-import static com.ruriel.assembly.api.exceptions.messages.VoteMessages.VOTE_NOT_FOUND;
 import static com.ruriel.assembly.api.exceptions.messages.VotingSessionMessages.*;
 
 @Service
@@ -55,12 +54,4 @@ public class VoteService {
         return voteRepository.save(vote);
     }
 
-    public Vote patch(Long votingSessionId, Long id, Vote vote) {
-        var currentVote = voteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTE_NOT_FOUND, id)));
-        findVotingSession(votingSessionId, vote.getAssociate());
-        currentVote.setContent(vote.getContent());
-        currentVote.setUpdatedAt(Date.from(Instant.now()));
-        return voteRepository.save(currentVote);
-    }
 }
