@@ -1,7 +1,6 @@
 package com.ruriel.assembly.api.v1.controllers;
 
 import com.ruriel.assembly.api.v1.resources.*;
-import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.entities.Associate;
 import com.ruriel.assembly.services.AssociateService;
 import jakarta.validation.Valid;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/associate", produces = "application/vnd.assembly.api.v1+json")

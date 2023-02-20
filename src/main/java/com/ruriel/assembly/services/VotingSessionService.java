@@ -4,6 +4,7 @@ import com.ruriel.assembly.api.exceptions.AgendaAlreadyHasVotingSessionException
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import com.ruriel.assembly.api.exceptions.VotingHasAlreadyStartedException;
 import com.ruriel.assembly.api.exceptions.VotingIsFinishedException;
+import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.entities.VotingSession;
 import com.ruriel.assembly.repositories.AgendaRepository;
 import com.ruriel.assembly.repositories.VotingSessionRepository;
@@ -34,38 +35,51 @@ public class VotingSessionService {
         return votingSessionRepository.findAll(pageable);
     }
 
+    private void checkAgenda(Agenda agenda) {
+        if (agenda.getVotingSession() != null)
+            throw new AgendaAlreadyHasVotingSessionException(String.format(AGENDA_ALREADY_HAS_VOTING_SESSION, agenda.getId()));
+    }
+
+    private void checkVotingSession(VotingSession votingSession) {
+        if (votingSession.isFinished())
+            throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, votingSession.getId()));
+        if (votingSession.hasStarted())
+            throw new VotingHasAlreadyStartedException(String.format(VOTING_SESSION_HAS_ALREADY_STARTED, votingSession.getId()));
+    }
+
+    private Date getDefaultEndsAt(Date startsAt) {
+        return new Date(startsAt.getTime() + ONE_MINUTE);
+    }
+
     public VotingSession create(VotingSession votingSession) {
         var agendaId = votingSession.getAgenda().getId();
         var agenda = agendaRepository.findById(agendaId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, agendaId)));
-        if(agenda.getVotingSession() != null)
-            throw new AgendaAlreadyHasVotingSessionException(String.format(AGENDA_ALREADY_HAS_VOTING_SESSION, agendaId));
+        checkAgenda(agenda);
         var startsAt = votingSession.getStartsAt();
         var endsAt = votingSession.getEndsAt();
-        if(endsAt == null || endsAt.before(startsAt))
-            votingSession.setEndsAt(new Date(startsAt.getTime() + ONE_MINUTE));
         votingSession.setVotes(new HashSet<>());
         votingSession.setAgenda(agenda);
         votingSession.setCreatedAt(Date.from(Instant.now()));
+        if (endsAt == null || endsAt.before(startsAt))
+            votingSession.setEndsAt(getDefaultEndsAt(startsAt));
         return votingSessionRepository.save(votingSession);
     }
 
-    public VotingSession update(Long id, VotingSession votingSession){
+    public VotingSession update(Long id, VotingSession votingSession) {
         var currentVotingSession = votingSessionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTING_SESSION_NOT_FOUND, id)));
-        if(currentVotingSession.isFinished())
-            throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, id));
-        if(currentVotingSession.hasStarted())
-            throw new VotingHasAlreadyStartedException(String.format(VOTING_SESSION_HAS_ALREADY_STARTED, id));
+        checkVotingSession(currentVotingSession);
         var startsAt = votingSession.getStartsAt();
         var endsAt = votingSession.getEndsAt();
         currentVotingSession.setStartsAt(startsAt);
-        if(endsAt == null || endsAt.before(startsAt))
-            currentVotingSession.setEndsAt(new Date(startsAt.getTime() + ONE_MINUTE));
+        if (endsAt == null || endsAt.before(startsAt))
+            currentVotingSession.setEndsAt(getDefaultEndsAt(startsAt));
         else
             currentVotingSession.setEndsAt(endsAt);
         return currentVotingSession;
     }
+
     public VotingSession findById(Long id) {
         return votingSessionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTING_SESSION_NOT_FOUND, id)));

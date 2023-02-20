@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.Objects;
 
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATED_VOTED_ALREADY;
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_REGISTERED;
