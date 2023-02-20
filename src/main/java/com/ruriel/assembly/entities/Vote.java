@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -18,7 +19,7 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "associate_id")
     private Associate associate;
 
@@ -29,7 +30,12 @@ public class Vote {
     @JoinColumn(name="voting_session_id", nullable=false)
     private VotingSession votingSession;
 
-    @CreationTimestamp
     @Column(nullable = false)
     private Date createdAt;
+
+    private Date updatedAt;
+
+    public Boolean hasAssociate(Long id){
+        return Objects.equals(associate.getId(), id);
+    }
 }

@@ -1,5 +1,6 @@
 package com.ruriel.assembly.api.v1.resources;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,14 +8,17 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class AgendaResponse {
+@AllArgsConstructor
+public class VoteResponse {
+
     private Long id;
+    private Long associateId;
 
-    private String name;
+    private Boolean content;
 
-    private String description;
+    private Long votingSessionId;
+
     private Date createdAt;
 
     private Date updatedAt;

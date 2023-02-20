@@ -15,6 +15,8 @@ public class VotingSessionResponse {
     private Long id;
     private Long agendaId;
 
+    private Date createdAt;
+
     private Date startsAt;
 
     private Date endsAt;

@@ -12,18 +12,20 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.Instant;
 
+import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_FOUND;
+
 @Service
 public class AssociateService {
     @Autowired
     private AssociateRepository associateRepository;
 
-    private static final String ASSOCIATE_NOT_FOUND = "No associate with id %d found.";
     public Page<Associate> findPage(Pageable pageable) {
         return associateRepository.findByEnabled(true, pageable);
     }
 
     public Associate create(Associate associate) {
         associate.setEnabled(true);
+        associate.setCreatedAt(Date.from(Instant.now()));
         return associateRepository.save(associate);
     }
 
@@ -36,6 +38,7 @@ public class AssociateService {
         return associateRepository.findById(id).map(current -> {
             current.setName(associate.getName());
             current.setDocument(associate.getDocument());
+            current.setUpdatedAt(Date.from(Instant.now()));
             return associateRepository.save(current);
         }).orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
 
@@ -44,6 +47,7 @@ public class AssociateService {
     public Associate disable(Long id) {
         return associateRepository.findById(id).map(current -> {
             current.setEnabled(false);
+            current.setUpdatedAt(Date.from(Instant.now()));
             return associateRepository.save(current);
         }).orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
     }

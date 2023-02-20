@@ -10,21 +10,21 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.HashSet;
+
+import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_NOT_FOUND;
 
 @Service
 public class AgendaService {
     @Autowired
     private AgendaRepository agendaRepository;
 
-    private static final String AGENDA_NOT_FOUND = "No agenda with id %d found.";
     public Page<Agenda> findPage(Pageable pageable) {
         return agendaRepository.findByEnabled(true, pageable);
     }
 
     public Agenda create(Agenda agenda) {
         agenda.setEnabled(true);
-        agenda.setVotingSessions(new HashSet<>());
+        agenda.setCreatedAt(Date.from(Instant.now()));
         return agendaRepository.save(agenda);
     }
 
@@ -37,6 +37,7 @@ public class AgendaService {
         return agendaRepository.findById(id).map(current -> {
             current.setDescription(agenda.getDescription());
             current.setName(agenda.getName());
+            current.setUpdatedAt(Date.from(Instant.now()));
             return agendaRepository.save(current);
         }).orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
 
@@ -44,8 +45,8 @@ public class AgendaService {
 
     public Agenda disable(Long id) {
         return agendaRepository.findById(id).map(current -> {
-            var now = Date.from(Instant.now());
             current.setEnabled(false);
+            current.setUpdatedAt(Date.from(Instant.now()));
             return agendaRepository.save(current);
         }).orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
     }

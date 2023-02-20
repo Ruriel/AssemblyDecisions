@@ -1,6 +1,6 @@
 package com.ruriel.assembly.configuration;
 
-import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
+import com.ruriel.assembly.api.exceptions.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -46,4 +46,38 @@ public class ExceptionHandlers {
                 .body(body);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<?> handle(VotingHasNotStartedException exception){
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+    @ExceptionHandler
+    public ResponseEntity<?> handle(VotingIsFinishedException exception){
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handle(VotingHasAlreadyStartedException exception){
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handle(AssociateNotRegisteredInAgendaException exception){
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handle(AgendaAlreadyHasVotingSessionException exception){
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handle(AssociateAlreadyVotedException exception){
+        var body = Map.of("error", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 }

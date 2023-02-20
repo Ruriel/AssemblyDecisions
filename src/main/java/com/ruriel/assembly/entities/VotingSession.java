@@ -1,17 +1,15 @@
 package com.ruriel.assembly.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingSession {
@@ -25,15 +23,18 @@ public class VotingSession {
     @Column(nullable = false)
     private Date endsAt;
 
-    @CreationTimestamp
+    @Column(nullable = false)
     private Date createdAt;
-    @ManyToOne
-    @JoinColumn(name = "agenda_id", nullable = false)
+    @OneToOne(mappedBy = "votingSession", cascade = CascadeType.MERGE)
     private Agenda agenda;
 
     @OneToMany(mappedBy = "votingSession")
     private Set<Vote> votes;
 
+    public void setAgenda(Agenda agenda){
+        this.agenda = agenda;
+        agenda.setVotingSession(this);
+    }
     public void setStartsAt(Date startsAt) {
         var now = Date.from(Instant.now());
         if (startsAt == null || startsAt.before(now))
@@ -82,5 +83,9 @@ public class VotingSession {
         if (noVotes > yesVotes)
             return ResultType.NO;
         return ResultType.DRAW;
+    }
+
+    public Boolean hasAssociateVoted(Associate associate){
+        return votes.stream().anyMatch(vote -> vote.hasAssociate(associate.getId()));
     }
 }
