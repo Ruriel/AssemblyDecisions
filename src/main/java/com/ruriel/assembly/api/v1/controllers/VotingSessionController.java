@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/votingSession", produces = "application/vnd.assembly.api.v1+json")
+@RequestMapping(value = "/voting-session", produces = "application/vnd.assembly.api.v1+json")
 public class VotingSessionController {
     @Autowired
     private VotingSessionService votingSessionService;
