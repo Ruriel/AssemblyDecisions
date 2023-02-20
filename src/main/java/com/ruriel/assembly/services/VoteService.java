@@ -9,8 +9,7 @@ import com.ruriel.assembly.repositories.VotingSessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATED_VOTED_ALREADY;
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_REGISTERED;
@@ -32,7 +31,7 @@ public class VoteService {
         if (votingSession.isFinished()) {
             throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, votingSession.getId()));
         }
-        if(!agenda.hasAssociate(associate.getId())) {
+        if(Boolean.FALSE.equals(agenda.hasAssociate(associate.getId()))) {
             throw new AssociateNotRegisteredInAgendaException(String.format(ASSOCIATE_NOT_REGISTERED, associate.getId()));
         }
     }
@@ -44,13 +43,14 @@ public class VoteService {
     }
 
     public Vote create(Long votingSessionId, Vote vote) {
+        var now = LocalDateTime.now();
         var associate = vote.getAssociate();
         var votingSession = findVotingSession(votingSessionId, associate);
-        if(votingSession.hasAssociateVoted(associate)) {
+        if(Boolean.TRUE.equals(votingSession.hasAssociateVoted(associate))) {
             throw new AssociateAlreadyVotedException(String.format(ASSOCIATED_VOTED_ALREADY, associate.getId()));
         }
         vote.setVotingSession(votingSession);
-        vote.setCreatedAt(Date.from(Instant.now()));
+        vote.setCreatedAt(now);
         return voteRepository.save(vote);
     }
 

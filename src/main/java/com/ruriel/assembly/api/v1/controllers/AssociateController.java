@@ -24,24 +24,24 @@ public class AssociateController {
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
+    public ResponseEntity<PaginatedResponse<AssociateResponse>> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
         var page = associateService.findPage(pageable);
         var typeToken = new TypeToken<PaginatedResponse<AssociateResponse>>() {
         }.getType();
-        var associatePaginatedResponse = modelMapper.map(page, typeToken);
+        PaginatedResponse<AssociateResponse> associatePaginatedResponse = modelMapper.map(page, typeToken);
         return ResponseEntity.ok(associatePaginatedResponse);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<AssociateResponse> findById(@PathVariable Long id) {
         var associate = associateService.findById(id);
         var associateResponse = modelMapper.map(associate, AssociateResponse.class);
         return ResponseEntity.ok(associateResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid AssociateRequest associateRequest) {
+    public ResponseEntity<AssociateResponse> create(@RequestBody @Valid AssociateRequest associateRequest) {
         var associate = modelMapper.map(associateRequest, Associate.class);
         var savedAssociate = associateService.create(associate);
         var responseBody = modelMapper.map(savedAssociate, AssociateResponse.class);
@@ -49,15 +49,17 @@ public class AssociateController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AssociateRequest associateRequest) {
+    public ResponseEntity<AssociateResponse> update(@PathVariable Long id, @RequestBody @Valid AssociateRequest associateRequest) {
         var associate = modelMapper.map(associateRequest, Associate.class);
-        associateService.update(id, associate);
-        return ResponseEntity.ok().build();
+        var updatedAssociate = associateService.update(id, associate);
+        var responseBody = modelMapper.map(updatedAssociate, AssociateResponse.class);
+        return ResponseEntity.ok(responseBody);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> disable(@PathVariable Long id) {
-        associateService.disable(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AssociateResponse> disable(@PathVariable Long id) {
+        var associate = associateService.disable(id);
+        var responseBody = modelMapper.map(associate, AssociateResponse.class);
+        return ResponseEntity.ok(responseBody);
     }
 }

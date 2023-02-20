@@ -27,24 +27,24 @@ public class VotingSessionController {
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> findPage(@PageableDefault(sort = {"startsAt"}) Pageable pageable) {
+    public ResponseEntity<PaginatedResponse<VotingSessionResponse>> findPage(@PageableDefault(sort = {"startsAt"}) Pageable pageable) {
         var page = votingSessionService.findPage(pageable);
         var typeToken = new TypeToken<PaginatedResponse<VotingSessionResponse>>() {
         }.getType();
-        var votingSessionPaginatedResponse = modelMapper.map(page, typeToken);
-        return ResponseEntity.ok(votingSessionPaginatedResponse);
+        PaginatedResponse<VotingSessionResponse> votingSessionPaginatedResponse = modelMapper.map(page, typeToken);
+        return ResponseEntity.status(HttpStatus.OK).body(votingSessionPaginatedResponse);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<VotingSessionResponse> findById(@PathVariable Long id) {
         var votingSession = votingSessionService.findById(id);
         var votingSessionResponse = modelMapper.map(votingSession, VotingSessionResponse.class);
         return ResponseEntity.ok(votingSessionResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid VotingSessionRequest votingSessionRequest){
+    public ResponseEntity<VotingSessionResponse> create(@RequestBody @Valid VotingSessionRequest votingSessionRequest){
         var votingSession = modelMapper.map(votingSessionRequest, VotingSession.class);
         var savedVotingSession = votingSessionService.create(votingSession);
         var responseBody = modelMapper.map(savedVotingSession, VotingSessionResponse.class);
@@ -52,14 +52,14 @@ public class VotingSessionController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid VotingSessionPatchRequest votingSessionPatchRequest){
+    public ResponseEntity<VotingSessionResponse> update(@PathVariable Long id, @RequestBody @Valid VotingSessionPatchRequest votingSessionPatchRequest){
         var votingSession = modelMapper.map(votingSessionPatchRequest, VotingSession.class);
         var updatedVotingSession = votingSessionService.update(id, votingSession);
         var responseBody = modelMapper.map(updatedVotingSession, VotingSessionResponse.class);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
     @PostMapping("/{id}/vote")
-    public ResponseEntity<?> createVote(@PathVariable Long id, @RequestBody @Valid VoteRequest voteRequest) {
+    public ResponseEntity<VoteResponse> createVote(@PathVariable Long id, @RequestBody @Valid VoteRequest voteRequest) {
         var vote = modelMapper.map(voteRequest, Vote.class);
         var savedVote = voteService.create(id, vote);
         var responseBody = modelMapper.map(savedVote, VoteResponse.class);

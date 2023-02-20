@@ -13,8 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 
 import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_ALREADY_HAS_VOTING_SESSION;
@@ -47,11 +46,12 @@ public class VotingSessionService {
             throw new VotingHasAlreadyStartedException(String.format(VOTING_SESSION_HAS_ALREADY_STARTED, votingSession.getId()));
     }
 
-    private Date getDefaultEndsAt(Date startsAt) {
-        return new Date(startsAt.getTime() + ONE_MINUTE);
+    private LocalDateTime getDefaultEndsAt(LocalDateTime startsAt) {
+        return startsAt.plusMinutes(ONE_MINUTE);
     }
 
     public VotingSession create(VotingSession votingSession) {
+        var now = LocalDateTime.now();
         var startsAt = votingSession.getStartsAt();
         var endsAt = votingSession.getEndsAt();
         var agendaId = votingSession.getAgenda().getId();
@@ -60,22 +60,24 @@ public class VotingSessionService {
         checkAgenda(agenda);
         votingSession.setVotes(new HashSet<>());
         votingSession.setAgenda(agenda);
-        votingSession.setCreatedAt(Date.from(Instant.now()));
-        if (endsAt == null || endsAt.before(startsAt))
+        votingSession.setCreatedAt(now);
+        if (endsAt == null || endsAt.isBefore(startsAt))
             votingSession.setEndsAt(getDefaultEndsAt(startsAt));
         return votingSessionRepository.save(votingSession);
     }
 
     public VotingSession update(Long id, VotingSession votingSession) {
+        final LocalDateTime now = LocalDateTime.now();
         var currentVotingSession = findById(id);
         var startsAt = votingSession.getStartsAt();
         var endsAt = votingSession.getEndsAt();
         checkVotingSession(currentVotingSession);
         currentVotingSession.setStartsAt(startsAt);
-        if (endsAt == null || endsAt.before(startsAt))
+        if (endsAt == null || endsAt.isBefore(startsAt))
             currentVotingSession.setEndsAt(getDefaultEndsAt(startsAt));
         else
             currentVotingSession.setEndsAt(endsAt);
+        currentVotingSession.setUpdatedAt(now);
         return currentVotingSession;
     }
 

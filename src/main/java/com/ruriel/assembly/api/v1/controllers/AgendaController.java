@@ -26,23 +26,23 @@ public class AgendaController {
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
+    public ResponseEntity<PaginatedResponse<AgendaResponse>> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
         var page = agendaService.findPage(pageable);
         var typeToken = new TypeToken<PaginatedResponse<AgendaResponse>>() {
         }.getType();
-        var agendaPaginatedResponse = modelMapper.map(page, typeToken);
+        PaginatedResponse<AgendaResponse> agendaPaginatedResponse = modelMapper.map(page, typeToken);
         return ResponseEntity.ok(agendaPaginatedResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<AgendaResponse> findById(@PathVariable Long id) {
         var agenda = agendaService.findById(id);
         var agendaResponse = modelMapper.map(agenda, AgendaResponse.class);
         return ResponseEntity.ok(agendaResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid AgendaRequest agendaRequest) {
+    public ResponseEntity<AgendaResponse> create(@RequestBody @Valid AgendaRequest agendaRequest) {
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         var savedAgenda = agendaService.create(agenda);
         var responseBody = modelMapper.map(savedAgenda, AgendaResponse.class);
@@ -50,15 +50,17 @@ public class AgendaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest) {
+    public ResponseEntity<AgendaResponse> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest) {
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
-        agendaService.update(id, agenda);
-        return ResponseEntity.ok().build();
+        var updatedAgenda = agendaService.update(id, agenda);
+        var responseBody = modelMapper.map(updatedAgenda, AgendaResponse.class);
+        return ResponseEntity.ok(responseBody);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> disable(@PathVariable Long id) {
-        agendaService.disable(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AgendaResponse> disable(@PathVariable Long id) {
+        var agenda = agendaService.disable(id);
+        var responseBody = modelMapper.map(agenda, AgendaResponse.class);
+        return ResponseEntity.ok(responseBody);
     }
 }

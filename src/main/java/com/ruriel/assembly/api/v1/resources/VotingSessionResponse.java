@@ -1,11 +1,10 @@
 package com.ruriel.assembly.api.v1.resources;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,11 +14,11 @@ public class VotingSessionResponse {
     private Long id;
     private Long agendaId;
 
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    private Date startsAt;
+    private LocalDateTime startsAt;
 
-    private Date endsAt;
+    private LocalDateTime endsAt;
 
     private Long totalVotes;
 

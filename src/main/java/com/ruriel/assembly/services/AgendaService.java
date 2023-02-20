@@ -8,8 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_NOT_FOUND;
 
@@ -23,8 +22,9 @@ public class AgendaService {
     }
 
     public Agenda create(Agenda agenda) {
+        var now = LocalDateTime.now();
         agenda.setEnabled(true);
-        agenda.setCreatedAt(Date.from(Instant.now()));
+        agenda.setCreatedAt(now);
         return agendaRepository.save(agenda);
     }
 
@@ -34,18 +34,20 @@ public class AgendaService {
     }
 
     public Agenda update(Long id, Agenda agenda) {
+        var now = LocalDateTime.now();
         var current = findById(id);
         current.setDescription(agenda.getDescription());
         current.setName(agenda.getName());
-        current.setUpdatedAt(Date.from(Instant.now()));
+        current.setUpdatedAt(now);
         return agendaRepository.save(current);
 
     }
 
     public Agenda disable(Long id) {
+        var now = LocalDateTime.now();
         var current = findById(id);
         current.setEnabled(false);
-        current.setUpdatedAt(Date.from(Instant.now()));
+        current.setUpdatedAt(now);
         return agendaRepository.save(current);
     }
 }

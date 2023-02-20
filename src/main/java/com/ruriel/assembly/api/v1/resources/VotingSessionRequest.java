@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class VotingSessionRequest {
     private Long agendaId;
 
     @NotNull(message = "Must have a startsAt date.")
-    private Date startsAt;
+    private LocalDateTime startsAt;
 
-    private Date endsAt;
+    private LocalDateTime endsAt;
 }
