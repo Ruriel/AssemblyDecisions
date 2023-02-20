@@ -35,20 +35,17 @@ public class AssociateService {
     }
 
     public Associate update(Long id, Associate associate) {
-        return associateRepository.findById(id).map(current -> {
-            current.setName(associate.getName());
-            current.setDocument(associate.getDocument());
-            current.setUpdatedAt(Date.from(Instant.now()));
-            return associateRepository.save(current);
-        }).orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
-
+        var current = findById(id);
+        current.setName(associate.getName());
+        current.setDocument(associate.getDocument());
+        current.setUpdatedAt(Date.from(Instant.now()));
+        return associateRepository.save(current);
     }
 
     public Associate disable(Long id) {
-        return associateRepository.findById(id).map(current -> {
-            current.setEnabled(false);
-            current.setUpdatedAt(Date.from(Instant.now()));
-            return associateRepository.save(current);
-        }).orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
+        var current = findById(id);
+        current.setEnabled(false);
+        current.setUpdatedAt(Date.from(Instant.now()));
+        return associateRepository.save(current);
     }
 }

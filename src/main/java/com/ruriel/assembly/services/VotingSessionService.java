@@ -52,12 +52,12 @@ public class VotingSessionService {
     }
 
     public VotingSession create(VotingSession votingSession) {
+        var startsAt = votingSession.getStartsAt();
+        var endsAt = votingSession.getEndsAt();
         var agendaId = votingSession.getAgenda().getId();
         var agenda = agendaRepository.findById(agendaId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, agendaId)));
         checkAgenda(agenda);
-        var startsAt = votingSession.getStartsAt();
-        var endsAt = votingSession.getEndsAt();
         votingSession.setVotes(new HashSet<>());
         votingSession.setAgenda(agenda);
         votingSession.setCreatedAt(Date.from(Instant.now()));
@@ -67,11 +67,10 @@ public class VotingSessionService {
     }
 
     public VotingSession update(Long id, VotingSession votingSession) {
-        var currentVotingSession = votingSessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTING_SESSION_NOT_FOUND, id)));
-        checkVotingSession(currentVotingSession);
+        var currentVotingSession = findById(id);
         var startsAt = votingSession.getStartsAt();
         var endsAt = votingSession.getEndsAt();
+        checkVotingSession(currentVotingSession);
         currentVotingSession.setStartsAt(startsAt);
         if (endsAt == null || endsAt.before(startsAt))
             currentVotingSession.setEndsAt(getDefaultEndsAt(startsAt));

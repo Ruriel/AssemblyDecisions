@@ -25,20 +25,22 @@ public class VoteService {
     @Autowired
     private VotingSessionRepository votingSessionRepository;
 
+    private void checkVotingSession(VotingSession votingSession, Associate associate){
+        var agenda = votingSession.getAgenda();
+        if (!votingSession.hasStarted()) {
+            throw new VotingHasNotStartedException(String.format(VOTING_HAS_NOT_STARTED, votingSession.getId()));
+        }
+        if (votingSession.isFinished()) {
+            throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, votingSession.getId()));
+        }
+        if(!agenda.hasAssociate(associate.getId())) {
+            throw new AssociateNotRegisteredInAgendaException(String.format(ASSOCIATE_NOT_REGISTERED, associate.getId()));
+        }
+    }
     private VotingSession findVotingSession(Long id, Associate associate) {
         var foundVotingSession = votingSessionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTING_SESSION_NOT_FOUND, id)));
-        var agenda = foundVotingSession.getAgenda();
-        var associateId = associate.getId();
-        if (!foundVotingSession.hasStarted()) {
-            throw new VotingHasNotStartedException(String.format(VOTING_HAS_NOT_STARTED, foundVotingSession.getId()));
-        }
-        if (foundVotingSession.isFinished()) {
-            throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, foundVotingSession.getId()));
-        }
-        if(!agenda.hasAssociate(associateId)) {
-            throw new AssociateNotRegisteredInAgendaException(String.format(ASSOCIATE_NOT_REGISTERED, associateId));
-        }
+        checkVotingSession(foundVotingSession, associate);
         return foundVotingSession;
     }
 
@@ -56,7 +58,7 @@ public class VoteService {
     public Vote patch(Long votingSessionId, Long id, Vote vote) {
         var currentVote = voteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTE_NOT_FOUND, id)));
-        findVotingSession(votingSessionId, currentVote.getAssociate());
+        findVotingSession(votingSessionId, vote.getAssociate());
         currentVote.setContent(vote.getContent());
         currentVote.setUpdatedAt(Date.from(Instant.now()));
         return voteRepository.save(currentVote);

@@ -34,20 +34,18 @@ public class AgendaService {
     }
 
     public Agenda update(Long id, Agenda agenda) {
-        return agendaRepository.findById(id).map(current -> {
-            current.setDescription(agenda.getDescription());
-            current.setName(agenda.getName());
-            current.setUpdatedAt(Date.from(Instant.now()));
-            return agendaRepository.save(current);
-        }).orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
+        var current = findById(id);
+        current.setDescription(agenda.getDescription());
+        current.setName(agenda.getName());
+        current.setUpdatedAt(Date.from(Instant.now()));
+        return agendaRepository.save(current);
 
     }
 
     public Agenda disable(Long id) {
-        return agendaRepository.findById(id).map(current -> {
-            current.setEnabled(false);
-            current.setUpdatedAt(Date.from(Instant.now()));
-            return agendaRepository.save(current);
-        }).orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
+        var current = findById(id);
+        current.setEnabled(false);
+        current.setUpdatedAt(Date.from(Instant.now()));
+        return agendaRepository.save(current);
     }
 }
