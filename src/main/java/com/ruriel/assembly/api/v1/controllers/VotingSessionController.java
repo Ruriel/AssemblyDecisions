@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
+
 @RestController
 @RequestMapping(value = "/voting-session", produces = "application/vnd.assembly.api.v1+json")
 public class VotingSessionController {

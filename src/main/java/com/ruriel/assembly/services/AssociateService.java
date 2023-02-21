@@ -9,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_FOUND;
 
@@ -21,6 +24,9 @@ public class AssociateService {
         return associateRepository.findByEnabled(true, pageable);
     }
 
+    public Set<Associate> findAllById(Set<Long> ids){
+        return new HashSet<>(associateRepository.findAllById(ids));
+    }
     public Associate create(Associate associate) {
         var now = LocalDateTime.now();
         associate.setEnabled(true);
@@ -39,6 +45,7 @@ public class AssociateService {
         current.setName(associate.getName());
         current.setDocument(associate.getDocument());
         current.setUpdatedAt(now);
+        current.setAgendas(associate.getAgendas());
         return associateRepository.save(current);
     }
 

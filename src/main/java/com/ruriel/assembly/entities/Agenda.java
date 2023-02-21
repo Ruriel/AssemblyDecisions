@@ -27,7 +27,7 @@ public class Agenda {
     @JoinColumn(name = "voting_session_id")
     private VotingSession votingSession;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "associates_agendas",
             joinColumns = @JoinColumn(name = "agenda_id"),
             inverseJoinColumns = @JoinColumn(name = "associate_id"))
@@ -40,8 +40,9 @@ public class Agenda {
 
     private LocalDateTime updatedAt;
 
-    public Boolean hasAssociate(Long associateId){
+    public Boolean hasAssociate(Long associateId) {
         return associates.stream().anyMatch(associate -> Objects.equals(associate.getId(), associateId));
     }
+
 
 }

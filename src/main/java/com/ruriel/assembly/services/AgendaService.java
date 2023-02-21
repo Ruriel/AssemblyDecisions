@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_NOT_FOUND;
 
@@ -21,6 +23,9 @@ public class AgendaService {
         return agendaRepository.findByEnabled(true, pageable);
     }
 
+    public Set<Agenda> findAllById(Set<Long> ids){
+        return new HashSet<>(agendaRepository.findAllById(ids));
+    }
     public Agenda create(Agenda agenda) {
         var now = LocalDateTime.now();
         agenda.setEnabled(true);
@@ -39,6 +44,7 @@ public class AgendaService {
         current.setDescription(agenda.getDescription());
         current.setName(agenda.getName());
         current.setUpdatedAt(now);
+        current.setAssociates(agenda.getAssociates());
         return agendaRepository.save(current);
 
     }

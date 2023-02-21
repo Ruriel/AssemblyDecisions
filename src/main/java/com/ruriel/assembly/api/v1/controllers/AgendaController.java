@@ -1,10 +1,13 @@
 package com.ruriel.assembly.api.v1.controllers;
 
 import com.ruriel.assembly.api.v1.resources.AgendaRequest;
+import com.ruriel.assembly.api.v1.resources.AgendaDetailedResponse;
 import com.ruriel.assembly.api.v1.resources.AgendaResponse;
 import com.ruriel.assembly.api.v1.resources.PaginatedResponse;
 import com.ruriel.assembly.entities.Agenda;
+import com.ruriel.assembly.entities.Associate;
 import com.ruriel.assembly.services.AgendaService;
+import com.ruriel.assembly.services.AssociateService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -23,6 +26,8 @@ public class AgendaController {
     private AgendaService agendaService;
 
     @Autowired
+    private AssociateService associateService;
+    @Autowired
     private ModelMapper modelMapper;
 
     @GetMapping
@@ -30,37 +35,41 @@ public class AgendaController {
         var page = agendaService.findPage(pageable);
         var typeToken = new TypeToken<PaginatedResponse<AgendaResponse>>() {
         }.getType();
-        PaginatedResponse<AgendaResponse> agendaPaginatedResponse = modelMapper.map(page, typeToken);
-        return ResponseEntity.ok(agendaPaginatedResponse);
+        PaginatedResponse<AgendaResponse> agendaResponse = modelMapper.map(page, typeToken);
+        return ResponseEntity.ok(agendaResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AgendaResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<AgendaDetailedResponse> findById(@PathVariable Long id) {
         var agenda = agendaService.findById(id);
-        var agendaResponse = modelMapper.map(agenda, AgendaResponse.class);
+        var agendaResponse = modelMapper.map(agenda, AgendaDetailedResponse.class);
         return ResponseEntity.ok(agendaResponse);
     }
 
     @PostMapping
-    public ResponseEntity<AgendaResponse> create(@RequestBody @Valid AgendaRequest agendaRequest) {
+    public ResponseEntity<AgendaDetailedResponse> create(@RequestBody @Valid AgendaRequest agendaRequest) {
+        var associates = associateService.findAllById(agendaRequest.getAssociates());
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
+        agenda.setAssociates(associates);
         var savedAgenda = agendaService.create(agenda);
-        var responseBody = modelMapper.map(savedAgenda, AgendaResponse.class);
+        var responseBody = modelMapper.map(savedAgenda, AgendaDetailedResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AgendaResponse> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest) {
+    public ResponseEntity<AgendaDetailedResponse> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest) {
+        var associates = associateService.findAllById(agendaRequest.getAssociates());
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
+        agenda.setAssociates(associates);
         var updatedAgenda = agendaService.update(id, agenda);
-        var responseBody = modelMapper.map(updatedAgenda, AgendaResponse.class);
+        var responseBody = modelMapper.map(updatedAgenda, AgendaDetailedResponse.class);
         return ResponseEntity.ok(responseBody);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AgendaResponse> disable(@PathVariable Long id) {
+    public ResponseEntity<AgendaDetailedResponse> disable(@PathVariable Long id) {
         var agenda = agendaService.disable(id);
-        var responseBody = modelMapper.map(agenda, AgendaResponse.class);
+        var responseBody = modelMapper.map(agenda, AgendaDetailedResponse.class);
         return ResponseEntity.ok(responseBody);
     }
 }
