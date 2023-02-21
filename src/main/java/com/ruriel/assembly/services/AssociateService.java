@@ -3,7 +3,7 @@ package com.ruriel.assembly.services;
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import com.ruriel.assembly.entities.Associate;
 import com.ruriel.assembly.repositories.AssociateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,14 +11,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_FOUND;
 
 @Service
+@RequiredArgsConstructor
 public class AssociateService {
-    @Autowired
-    private AssociateRepository associateRepository;
+    private final AssociateRepository associateRepository;
 
     public Page<Associate> findPage(Pageable pageable) {
         return associateRepository.findByEnabled(true, pageable);

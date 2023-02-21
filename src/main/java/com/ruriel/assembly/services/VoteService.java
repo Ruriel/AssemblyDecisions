@@ -6,7 +6,7 @@ import com.ruriel.assembly.entities.Vote;
 import com.ruriel.assembly.entities.VotingSession;
 import com.ruriel.assembly.repositories.VoteRepository;
 import com.ruriel.assembly.repositories.VotingSessionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,12 +16,11 @@ import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSO
 import static com.ruriel.assembly.api.exceptions.messages.VotingSessionMessages.*;
 
 @Service
+@RequiredArgsConstructor
 public class VoteService {
 
-    @Autowired
-    private VoteRepository voteRepository;
-    @Autowired
-    private VotingSessionRepository votingSessionRepository;
+    private final VoteRepository voteRepository;
+    private final VotingSessionRepository votingSessionRepository;
 
     private void checkVotingSession(VotingSession votingSession, Associate associate){
         var agenda = votingSession.getAgenda();

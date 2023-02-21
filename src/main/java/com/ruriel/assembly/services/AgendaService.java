@@ -3,6 +3,7 @@ package com.ruriel.assembly.services;
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.repositories.AgendaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +16,9 @@ import java.util.Set;
 import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_NOT_FOUND;
 
 @Service
+@RequiredArgsConstructor
 public class AgendaService {
-    @Autowired
-    private AgendaRepository agendaRepository;
+    private final AgendaRepository agendaRepository;
 
     public Page<Agenda> findPage(Pageable pageable) {
         return agendaRepository.findByEnabled(true, pageable);

@@ -16,9 +16,7 @@ public class JacksonConfiguration {
     private String dateFormat;
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-
         return builder -> {
-
             DateTimeFormatter dateTimeFormatter =  DateTimeFormatter.ofPattern(dateFormat);
             builder.deserializers(new LocalDateTimeDeserializer(dateTimeFormatter));
             builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));

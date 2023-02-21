@@ -8,7 +8,7 @@ import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.entities.VotingSession;
 import com.ruriel.assembly.repositories.AgendaRepository;
 import com.ruriel.assembly.repositories.VotingSessionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,12 +21,11 @@ import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_
 import static com.ruriel.assembly.api.exceptions.messages.VotingSessionMessages.*;
 
 @Service
+@RequiredArgsConstructor
 public class VotingSessionService {
 
-    @Autowired
-    private AgendaRepository agendaRepository;
-    @Autowired
-    private VotingSessionRepository votingSessionRepository;
+    private final AgendaRepository agendaRepository;
+    private final VotingSessionRepository votingSessionRepository;
 
     private static final int ONE_MINUTE = 60 * 1000;
 
@@ -78,7 +77,7 @@ public class VotingSessionService {
         else
             currentVotingSession.setEndsAt(endsAt);
         currentVotingSession.setUpdatedAt(now);
-        return currentVotingSession;
+        return votingSessionRepository.save(currentVotingSession);
     }
 
     public VotingSession findById(Long id) {
