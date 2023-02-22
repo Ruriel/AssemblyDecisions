@@ -3,7 +3,6 @@ package com.ruriel.assembly.controllers;
 import com.ruriel.assembly.api.v1.controllers.AssociateController;
 import com.ruriel.assembly.api.v1.resources.AssociateRequest;
 import com.ruriel.assembly.entities.Associate;
-import com.ruriel.assembly.services.AgendaService;
 import com.ruriel.assembly.services.AssociateService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +18,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AssociateControllerTests {
-    @Mock
-    private AgendaService agendaService;
 
     @Mock
     private AssociateService associateService;
@@ -49,7 +46,6 @@ class AssociateControllerTests {
         var id = 1L;
         var associate = Associate.builder().id(id).agendas(new HashSet<>()).build();
         var associateRequest = new AssociateRequest();
-        when(agendaService.findAllById(anySet())).thenReturn(new HashSet<>());
         when(modelMapper.map(associateRequest, Associate.class)).thenReturn(associate);
         associateController.create(associateRequest);
         verify(associateService).create(associate);
@@ -60,7 +56,6 @@ class AssociateControllerTests {
         var id = 1L;
         var associate = Associate.builder().id(id).agendas(new HashSet<>()).build();
         var associateRequest = new AssociateRequest();
-        when(agendaService.findAllById(anySet())).thenReturn(new HashSet<>());
         when(modelMapper.map(associateRequest, Associate.class)).thenReturn(associate);
         associateController.update(id, associateRequest);
         verify(associateService).update(id, associate);

@@ -48,7 +48,6 @@ public class AssociateService {
         current.setName(associate.getName());
         current.setDocument(associate.getDocument());
         current.setUpdatedAt(now);
-        current.setAgendas(associate.getAgendas());
         return associateRepository.save(current);
     }
 

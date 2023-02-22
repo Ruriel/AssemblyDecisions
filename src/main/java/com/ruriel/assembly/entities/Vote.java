@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +21,7 @@ public class Vote {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "associate_id")
+    @JoinColumn(name = "associate_id", nullable=false)
     private Associate associate;
 
     @Column(nullable = false)

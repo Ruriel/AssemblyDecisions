@@ -1,7 +1,6 @@
 package com.ruriel.assembly.api.v1.resources;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +21,6 @@ public class AgendaRequest {
     @NotBlank(message = "Description should not be null or blank.")
     private String description;
 
-    private Set<Long> associates = new HashSet<>();
+    private Set<Long> associateIds = new HashSet<>();
 
 }

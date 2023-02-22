@@ -1,7 +1,5 @@
 package com.ruriel.assembly.api.exceptions.messages;
 
-import com.ruriel.assembly.entities.VotingSession;
-
 public class VotingSessionMessages {
 
     public static final String VOTING_SESSION_NOT_FOUND = "No voting session with id %d found.";
