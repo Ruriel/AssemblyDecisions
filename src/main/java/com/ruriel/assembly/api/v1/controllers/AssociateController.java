@@ -2,12 +2,13 @@ package com.ruriel.assembly.api.v1.controllers;
 
 import com.ruriel.assembly.api.v1.resources.*;
 import com.ruriel.assembly.entities.Associate;
-import com.ruriel.assembly.services.AgendaService;
 import com.ruriel.assembly.services.AssociateService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -17,15 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/associate", produces = "application/vnd.assembly.api.v1+json")
+@RequiredArgsConstructor
 public class AssociateController {
 
-    @Autowired
-    private AgendaService agendaService;
-    @Autowired
-    private AssociateService associateService;
 
-    @Autowired
-    private ModelMapper modelMapper;
+	
+    private final AssociateService associateService;
+
+    private final ModelMapper modelMapper;
 
     @GetMapping
     public ResponseEntity<PaginatedResponse<AssociateResponse>> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
@@ -46,9 +46,7 @@ public class AssociateController {
 
     @PostMapping
     public ResponseEntity<AssociateDetailedResponse> create(@RequestBody @Valid AssociateRequest associateRequest) {
-        var agendas = agendaService.findAllById(associateRequest.getAgendaIds());
         var associate = modelMapper.map(associateRequest, Associate.class);
-        associate.setAgendas(agendas);
         var savedAssociate = associateService.create(associate);
         var responseBody = modelMapper.map(savedAssociate, AssociateDetailedResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
@@ -56,9 +54,7 @@ public class AssociateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AssociateDetailedResponse> update(@PathVariable Long id, @RequestBody @Valid AssociateRequest associateRequest) {
-        var agendas = agendaService.findAllById(associateRequest.getAgendaIds());
         var associate = modelMapper.map(associateRequest, Associate.class);
-        associate.setAgendas(agendas);
         var updatedAssociate = associateService.update(id, associate);
         var responseBody = modelMapper.map(updatedAssociate, AssociateDetailedResponse.class);
         return ResponseEntity.ok(responseBody);

@@ -21,12 +21,13 @@ repositories {
 ext {
 	set('springCloudVersion', "2022.0.1")
 }
-
+jar {
+    enabled = false
+}
 dependencies {
 	runtimeOnly 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.modelmapper:modelmapper:3.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	runtimeOnly 'com.h2database:h2'

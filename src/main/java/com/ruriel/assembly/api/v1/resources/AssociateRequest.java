@@ -1,15 +1,12 @@
 package com.ruriel.assembly.api.v1.resources;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Data
@@ -25,5 +22,4 @@ public class AssociateRequest {
     @Pattern(regexp = "^([0-9]{11})$", message = "Document should consist of 11 numbers from 0 to 9.")
     private String document;
 
-    private Set<Long> agendaIds = new HashSet<>();
 }

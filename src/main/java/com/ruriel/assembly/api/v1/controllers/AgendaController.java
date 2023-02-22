@@ -45,7 +45,7 @@ public class AgendaController {
 
     @PostMapping
     public ResponseEntity<AgendaDetailedResponse> create(@RequestBody @Valid AgendaRequest agendaRequest) {
-        var associates = associateService.findAllById(agendaRequest.getAssociates());
+        var associates = associateService.findAllById(agendaRequest.getAssociateIds());
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         agenda.setAssociates(associates);
         var savedAgenda = agendaService.create(agenda);
@@ -55,7 +55,7 @@ public class AgendaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AgendaDetailedResponse> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest) {
-        var associates = associateService.findAllById(agendaRequest.getAssociates());
+        var associates = associateService.findAllById(agendaRequest.getAssociateIds());
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         agenda.setAssociates(associates);
         var updatedAgenda = agendaService.update(id, agenda);

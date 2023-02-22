@@ -21,8 +21,10 @@ public class Agenda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable=false)
     private String name;
 
+    @Column(nullable=false)
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -45,6 +47,6 @@ public class Agenda {
     public Boolean hasAssociate(Long associateId) {
         return associates.stream().anyMatch(associate -> Objects.equals(associate.getId(), associateId));
     }
-
+    
 
 }

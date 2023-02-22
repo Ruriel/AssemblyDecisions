@@ -13,23 +13,25 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Associate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String name;
+	@Column(nullable = false)
+	private String name;
 
-    @Column(unique = true)
-    private String document;
-    private Boolean enabled;
+	@Column(unique = true, nullable = false)
+	private String document;
+	
+    @Column(nullable=false)
+	private Boolean enabled;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+	private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "associates")
-    private Set<Agenda> agendas;
-
-
+	@ManyToMany(mappedBy = "associates")
+	private Set<Agenda> agendas;
+	
 }
