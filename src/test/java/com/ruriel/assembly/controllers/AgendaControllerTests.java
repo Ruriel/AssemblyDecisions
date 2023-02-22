@@ -1,8 +1,6 @@
 package com.ruriel.assembly.controllers;
 
-import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import com.ruriel.assembly.api.v1.controllers.AgendaController;
-import com.ruriel.assembly.api.v1.resources.AgendaDetailedResponse;
 import com.ruriel.assembly.api.v1.resources.AgendaRequest;
 import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.services.AgendaService;
@@ -13,19 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.ClassBasedNavigableIterableAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,8 +39,6 @@ class AgendaControllerTests {
     @Test
     void shouldFindById() {
         var id = 1L;
-        var agenda = Agenda.builder().id(1L).build();
-        when(agendaService.findById(id)).thenReturn(agenda);
         agendaController.findById(id);
         verify(agendaService).findById(id);
     }
