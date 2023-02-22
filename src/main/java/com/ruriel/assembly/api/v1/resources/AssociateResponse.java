@@ -1,13 +1,14 @@
 package com.ruriel.assembly.api.v1.resources;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AssociateResponse {
@@ -15,9 +16,7 @@ public class AssociateResponse {
 
     private String name;
 
-    private String document;
+    private LocalDateTime createdAt;
 
-    private Date createdAt;
-
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 }

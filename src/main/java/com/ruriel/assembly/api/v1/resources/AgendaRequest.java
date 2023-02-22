@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Data
@@ -20,5 +21,7 @@ public class AgendaRequest {
 
     @NotBlank(message = "Description should not be null or blank.")
     private String description;
+
+    private Set<Long> associates = new HashSet<>();
 
 }

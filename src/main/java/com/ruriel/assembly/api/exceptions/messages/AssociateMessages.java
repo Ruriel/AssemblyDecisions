@@ -7,5 +7,6 @@ public class AssociateMessages {
 
     public static final String ASSOCIATED_VOTED_ALREADY = "Associate with id %d has already voted.";
 
+    private AssociateMessages(){}
 
 }

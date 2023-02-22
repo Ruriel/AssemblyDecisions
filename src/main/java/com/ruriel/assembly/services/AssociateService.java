@@ -1,51 +1,62 @@
 package com.ruriel.assembly.services;
 
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
-import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.entities.Associate;
 import com.ruriel.assembly.repositories.AssociateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_FOUND;
 
 @Service
+@RequiredArgsConstructor
 public class AssociateService {
-    @Autowired
-    private AssociateRepository associateRepository;
+    private final AssociateRepository associateRepository;
 
     public Page<Associate> findPage(Pageable pageable) {
         return associateRepository.findByEnabled(true, pageable);
     }
 
+    public Set<Associate> findAllById(Set<Long> ids) {
+        return new HashSet<>(associateRepository.findAllById(ids));
+    }
+
     public Associate create(Associate associate) {
+        var now = LocalDateTime.now();
         associate.setEnabled(true);
-        associate.setCreatedAt(Date.from(Instant.now()));
+        associate.setCreatedAt(now);
         return associateRepository.save(associate);
     }
 
     public Associate findById(Long id) {
         return associateRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
+                .orElseThrow(() -> {
+                    var message = String.format(ASSOCIATE_NOT_FOUND, id);
+                    return new ResourceNotFoundException(message);
+                });
     }
 
     public Associate update(Long id, Associate associate) {
+        var now = LocalDateTime.now();
         var current = findById(id);
         current.setName(associate.getName());
         current.setDocument(associate.getDocument());
-        current.setUpdatedAt(Date.from(Instant.now()));
+        current.setUpdatedAt(now);
+        current.setAgendas(associate.getAgendas());
         return associateRepository.save(current);
     }
 
     public Associate disable(Long id) {
+        var now = LocalDateTime.now();
         var current = findById(id);
         current.setEnabled(false);
-        current.setUpdatedAt(Date.from(Instant.now()));
+        current.setUpdatedAt(now);
         return associateRepository.save(current);
     }
 }

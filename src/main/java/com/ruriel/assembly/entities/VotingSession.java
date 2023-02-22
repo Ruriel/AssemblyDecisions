@@ -3,13 +3,13 @@ package com.ruriel.assembly.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingSession {
@@ -18,13 +18,16 @@ public class VotingSession {
     private Long id;
 
     @Column(nullable = false)
-    private Date startsAt;
+    private LocalDateTime startsAt;
 
     @Column(nullable = false)
-    private Date endsAt;
+    private LocalDateTime endsAt;
 
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
     @OneToOne(mappedBy = "votingSession", cascade = CascadeType.MERGE)
     private Agenda agenda;
 
@@ -35,9 +38,9 @@ public class VotingSession {
         this.agenda = agenda;
         agenda.setVotingSession(this);
     }
-    public void setStartsAt(Date startsAt) {
-        var now = Date.from(Instant.now());
-        if (startsAt == null || startsAt.before(now))
+    public void setStartsAt(LocalDateTime startsAt) {
+        var now = LocalDateTime.now();
+        if (startsAt == null || startsAt.isBefore(now))
             this.startsAt = now;
         else
             this.startsAt = startsAt;
@@ -61,13 +64,13 @@ public class VotingSession {
     }
 
     public boolean hasStarted() {
-        var now = Date.from(Instant.now());
-        return now.after(startsAt);
+        var now = LocalDateTime.now();
+        return now.isAfter(startsAt);
     }
 
     public boolean isFinished() {
-        var now = Date.from(Instant.now());
-        return now.after(endsAt);
+        var now = LocalDateTime.now();
+        return now.isAfter(endsAt);
     }
 
     @Enumerated(EnumType.STRING)

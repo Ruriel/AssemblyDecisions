@@ -2,18 +2,18 @@ package com.ruriel.assembly.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Agenda {
@@ -29,7 +29,7 @@ public class Agenda {
     @JoinColumn(name = "voting_session_id")
     private VotingSession votingSession;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "associates_agendas",
             joinColumns = @JoinColumn(name = "agenda_id"),
             inverseJoinColumns = @JoinColumn(name = "associate_id"))
@@ -38,12 +38,13 @@ public class Agenda {
     private Boolean enabled;
 
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
-    public Boolean hasAssociate(Long associateId){
+    public Boolean hasAssociate(Long associateId) {
         return associates.stream().anyMatch(associate -> Objects.equals(associate.getId(), associateId));
     }
+
 
 }
