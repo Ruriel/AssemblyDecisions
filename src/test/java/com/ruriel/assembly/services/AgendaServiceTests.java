@@ -3,7 +3,6 @@ package com.ruriel.assembly.services;
 import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.repositories.AgendaRepository;
-import com.ruriel.assembly.services.AgendaService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

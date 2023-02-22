@@ -23,9 +23,10 @@ public class AssociateService {
         return associateRepository.findByEnabled(true, pageable);
     }
 
-    public Set<Associate> findAllById(Set<Long> ids){
+    public Set<Associate> findAllById(Set<Long> ids) {
         return new HashSet<>(associateRepository.findAllById(ids));
     }
+
     public Associate create(Associate associate) {
         var now = LocalDateTime.now();
         associate.setEnabled(true);
@@ -35,7 +36,10 @@ public class AssociateService {
 
     public Associate findById(Long id) {
         return associateRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(ASSOCIATE_NOT_FOUND, id)));
+                .orElseThrow(() -> {
+                    var message = String.format(ASSOCIATE_NOT_FOUND, id);
+                    return new ResourceNotFoundException(message);
+                });
     }
 
     public Associate update(Long id, Associate associate) {

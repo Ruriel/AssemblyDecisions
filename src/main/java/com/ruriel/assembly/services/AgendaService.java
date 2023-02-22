@@ -4,7 +4,6 @@ import com.ruriel.assembly.api.exceptions.ResourceNotFoundException;
 import com.ruriel.assembly.entities.Agenda;
 import com.ruriel.assembly.repositories.AgendaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,10 @@ public class AgendaService {
 
     public Agenda findById(Long id) {
         return agendaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, id)));
+                .orElseThrow(() -> {
+                    var message = String.format(AGENDA_NOT_FOUND, id);
+                    return new ResourceNotFoundException(message);
+                });
     }
 
     public Agenda update(Long id, Agenda agenda) {

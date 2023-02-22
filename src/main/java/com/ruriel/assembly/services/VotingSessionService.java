@@ -34,15 +34,21 @@ public class VotingSessionService {
     }
 
     private void checkAgenda(Agenda agenda) {
-        if (agenda.getVotingSession() != null)
-            throw new AgendaAlreadyHasVotingSessionException(String.format(AGENDA_ALREADY_HAS_VOTING_SESSION, agenda.getId()));
+        if (agenda.getVotingSession() != null) {
+            var message = String.format(AGENDA_ALREADY_HAS_VOTING_SESSION, agenda.getId());
+            throw new AgendaAlreadyHasVotingSessionException(message);
+        }
     }
 
     private void checkVotingSession(VotingSession votingSession) {
-        if (votingSession.isFinished())
-            throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, votingSession.getId()));
-        if (votingSession.hasStarted())
-            throw new VotingHasAlreadyStartedException(String.format(VOTING_SESSION_HAS_ALREADY_STARTED, votingSession.getId()));
+        if (votingSession.isFinished()) {
+            var message = String.format(VOTING_IS_FINISHED, votingSession.getId());
+            throw new VotingIsFinishedException(message);
+        }
+        if (votingSession.hasStarted()) {
+            var message = String.format(VOTING_SESSION_HAS_ALREADY_STARTED, votingSession.getId());
+            throw new VotingHasAlreadyStartedException(message);
+        }
     }
 
     private LocalDateTime getDefaultEndsAt(LocalDateTime startsAt) {
@@ -55,7 +61,10 @@ public class VotingSessionService {
         var endsAt = votingSession.getEndsAt();
         var agendaId = votingSession.getAgenda().getId();
         var agenda = agendaRepository.findById(agendaId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(AGENDA_NOT_FOUND, agendaId)));
+                .orElseThrow(() -> {
+                    var message = String.format(AGENDA_NOT_FOUND, agendaId);
+                    return new ResourceNotFoundException(message);
+                });
         checkAgenda(agenda);
         votingSession.setVotes(new HashSet<>());
         votingSession.setAgenda(agenda);
@@ -82,7 +91,10 @@ public class VotingSessionService {
 
     public VotingSession findById(Long id) {
         return votingSessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTING_SESSION_NOT_FOUND, id)));
+                .orElseThrow(() -> {
+                    var message = String.format(VOTING_SESSION_NOT_FOUND, id);
+                    return new ResourceNotFoundException(message);
+                });
     }
 
 }

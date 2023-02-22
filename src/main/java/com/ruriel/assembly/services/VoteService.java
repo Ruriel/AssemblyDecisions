@@ -25,18 +25,24 @@ public class VoteService {
     private void checkVotingSession(VotingSession votingSession, Associate associate){
         var agenda = votingSession.getAgenda();
         if (!votingSession.hasStarted()) {
-            throw new VotingHasNotStartedException(String.format(VOTING_HAS_NOT_STARTED, votingSession.getId()));
+            var message = String.format(VOTING_HAS_NOT_STARTED, votingSession.getId());
+            throw new VotingHasNotStartedException(message);
         }
         if (votingSession.isFinished()) {
-            throw new VotingIsFinishedException(String.format(VOTING_IS_FINISHED, votingSession.getId()));
+            var message = String.format(VOTING_IS_FINISHED, votingSession.getId());
+            throw new VotingIsFinishedException(message);
         }
         if(Boolean.FALSE.equals(agenda.hasAssociate(associate.getId()))) {
-            throw new AssociateNotRegisteredInAgendaException(String.format(ASSOCIATE_NOT_REGISTERED, associate.getId()));
+            var message = String.format(ASSOCIATE_NOT_REGISTERED, associate.getId());
+            throw new AssociateNotRegisteredInAgendaException(message);
         }
     }
     private VotingSession findVotingSession(Long id, Associate associate) {
         var foundVotingSession = votingSessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(VOTING_SESSION_NOT_FOUND, id)));
+                .orElseThrow(() -> {
+                    var message = String.format(VOTING_SESSION_NOT_FOUND, id);
+                    return new ResourceNotFoundException(message);
+                });
         checkVotingSession(foundVotingSession, associate);
         return foundVotingSession;
     }
@@ -46,7 +52,8 @@ public class VoteService {
         var associate = vote.getAssociate();
         var votingSession = findVotingSession(votingSessionId, associate);
         if(Boolean.TRUE.equals(votingSession.hasAssociateVoted(associate))) {
-            throw new AssociateAlreadyVotedException(String.format(ASSOCIATED_VOTED_ALREADY, associate.getId()));
+            var message = String.format(ASSOCIATED_VOTED_ALREADY, associate.getId());
+            throw new AssociateAlreadyVotedException(message);
         }
         vote.setVotingSession(votingSession);
         vote.setCreatedAt(now);

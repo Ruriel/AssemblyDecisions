@@ -5,13 +5,12 @@ import com.ruriel.assembly.api.v1.resources.AgendaDetailedResponse;
 import com.ruriel.assembly.api.v1.resources.AgendaResponse;
 import com.ruriel.assembly.api.v1.resources.PaginatedResponse;
 import com.ruriel.assembly.entities.Agenda;
-import com.ruriel.assembly.entities.Associate;
 import com.ruriel.assembly.services.AgendaService;
 import com.ruriel.assembly.services.AssociateService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -21,14 +20,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/agenda", produces = "application/vnd.assembly.api.v1+json")
+@RequiredArgsConstructor
 public class AgendaController {
-    @Autowired
-    private AgendaService agendaService;
+    private final AgendaService agendaService;
 
-    @Autowired
-    private AssociateService associateService;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final AssociateService associateService;
+    private final ModelMapper modelMapper;
 
     @GetMapping
     public ResponseEntity<PaginatedResponse<AgendaResponse>> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
