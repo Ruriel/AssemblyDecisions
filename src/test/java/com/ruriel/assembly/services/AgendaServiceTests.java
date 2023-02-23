@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -28,13 +27,6 @@ class AgendaServiceTests {
         var pageable = PageRequest.of(0, 5);
         agendaService.findPage(pageable);
         verify(agendaRepository).findByEnabled(true, pageable);
-    }
-
-    @Test
-    void shouldFindAllById(){
-        var ids = Set.of(1L, 2L, 3L);
-        agendaService.findAllById(ids);
-        verify(agendaRepository).findAllById(ids);
     }
 
     @Test

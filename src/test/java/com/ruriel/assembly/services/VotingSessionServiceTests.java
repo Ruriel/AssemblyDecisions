@@ -2,6 +2,7 @@ package com.ruriel.assembly.services;
 
 import com.ruriel.assembly.api.exceptions.*;
 import com.ruriel.assembly.entities.Agenda;
+import com.ruriel.assembly.entities.Associate;
 import com.ruriel.assembly.entities.VotingSession;
 import com.ruriel.assembly.repositories.AgendaRepository;
 import com.ruriel.assembly.repositories.VotingSessionRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
@@ -30,24 +32,46 @@ class VotingSessionServiceTests {
     private VotingSessionService votingSessionService;
 
     @Test
-    void shouldFindPage(){
+    void shouldFindPage() {
         var pageable = PageRequest.of(0, 5);
         votingSessionService.findPage(pageable);
         verify(votingSessionRepository).findAll(pageable);
     }
 
     @Test
-    void shouldCreate(){
+    void shouldCreate() {
         var id = 1L;
-        var agenda = Agenda.builder().id(id).build();
-        var votingSession = VotingSession.builder().agenda(agenda).startsAt(LocalDateTime.now()).build();
+        var associate = Associate.builder().id(id).build();
+        var agenda = Agenda.builder().id(id).associates(Set.of(associate)).build();
+        var startsAt = LocalDateTime.now().plusMinutes(10);
+        var votingSession = VotingSession.builder().agenda(agenda).startsAt(startsAt).build();
         when(agendaRepository.findById(id)).thenReturn(Optional.of(agenda));
         votingSessionService.create(votingSession);
         verify(votingSessionRepository).save(votingSession);
     }
 
     @Test
-    void shouldNotCreateAndThrowNotFound(){
+    void shouldNotCreateAndThrowTimeMustBeInTheFutureException() {
+        var id = 1L;
+        var associate = Associate.builder().id(id).build();
+        var agenda = Agenda.builder().id(id).associates(Set.of(associate)).build();
+        var startsAt = LocalDateTime.now().minusMinutes(10);
+        var votingSession = VotingSession.builder().agenda(agenda).startsAt(startsAt).build();
+        when(agendaRepository.findById(id)).thenReturn(Optional.of(agenda));
+        assertThatThrownBy(() -> votingSessionService.create(votingSession)).isInstanceOf(TimeMustBeInTheFutureException.class);
+    }
+
+    @Test
+    void shouldNotCreateAndThrowNoAssociatesException() {
+        var id = 1L;
+        var agenda = Agenda.builder().id(id).build();
+        var votingSession = VotingSession.builder().agenda(agenda).startsAt(LocalDateTime.now()).build();
+        when(agendaRepository.findById(id)).thenReturn(Optional.of(agenda));
+        assertThatThrownBy(() -> votingSessionService.create(votingSession)).isInstanceOf(AgendaHasNoAssociatesException.class);
+    }
+
+    @Test
+    void shouldNotCreateAndThrowNotFound() {
         var id = 1L;
         var agenda = Agenda.builder().id(id).build();
         var votingSession = VotingSession.builder().agenda(agenda).startsAt(LocalDateTime.now()).build();
@@ -55,7 +79,7 @@ class VotingSessionServiceTests {
     }
 
     @Test
-    void shouldNotCreateAndThrowAlreadyHasVotingSession(){
+    void shouldNotCreateAndThrowAlreadyHasVotingSession() {
         var id = 1L;
         var agenda = Agenda.builder().id(id).build();
         var votingSession = VotingSession.builder().agenda(agenda).startsAt(LocalDateTime.now()).build();
@@ -66,7 +90,7 @@ class VotingSessionServiceTests {
     }
 
     @Test
-    void shouldUpdate(){
+    void shouldUpdate() {
         var id = 1L;
         var agenda = Agenda.builder().id(id).build();
         var startsAt = LocalDateTime.now().plusMinutes(10);
@@ -81,7 +105,21 @@ class VotingSessionServiceTests {
     }
 
     @Test
-    void shouldNotUpdateBecauseIsFinished(){
+    void shouldNotUpdateAndThrowTimeMustBeInTheFutureException() {
+        var id = 1L;
+        var agenda = Agenda.builder().id(id).build();
+        var startsAt = LocalDateTime.now().minusMinutes(10);
+        var endsAt = startsAt.plusMinutes(1);
+        var currentStartsAt = LocalDateTime.now().plusMinutes(5);
+        var currentEndsAt = currentStartsAt.plusMinutes(1);
+        var currentSession = VotingSession.builder().agenda(agenda).startsAt(currentStartsAt).endsAt(currentEndsAt).build();
+        var votingSession = VotingSession.builder().startsAt(startsAt).endsAt(endsAt).build();
+        when(votingSessionRepository.findById(id)).thenReturn(Optional.of(currentSession));
+        assertThatThrownBy(() -> votingSessionService.update(id, votingSession)).isInstanceOf(TimeMustBeInTheFutureException.class);
+    }
+
+    @Test
+    void shouldNotUpdateBecauseIsFinished() {
         var id = 1L;
         var agenda = Agenda.builder().id(id).build();
         var currentStartsAt = LocalDateTime.now().minusMinutes(10);
@@ -95,7 +133,7 @@ class VotingSessionServiceTests {
     }
 
     @Test
-    void shouldNotUpdateBecauseHasStarted(){
+    void shouldNotUpdateBecauseHasStarted() {
         var id = 1L;
         var agenda = Agenda.builder().id(id).build();
         var currentStartsAt = LocalDateTime.now();
@@ -109,7 +147,7 @@ class VotingSessionServiceTests {
     }
 
     @Test
-    void shouldFindById(){
+    void shouldFindById() {
         var id = 1L;
         var votingSession = VotingSession.builder().id(id).build();
         when(votingSessionRepository.findById(id)).thenReturn(Optional.of(votingSession));
@@ -118,7 +156,7 @@ class VotingSessionServiceTests {
     }
 
     @Test
-    void shouldNotFindById(){
+    void shouldNotFindById() {
         var id = 1L;
         assertThatThrownBy(() -> votingSessionService.findById(id)).isInstanceOf(ResourceNotFoundException.class);
     }

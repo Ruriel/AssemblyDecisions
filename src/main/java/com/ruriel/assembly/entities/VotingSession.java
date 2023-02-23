@@ -38,13 +38,6 @@ public class VotingSession {
         this.agenda = agenda;
         agenda.setVotingSession(this);
     }
-    public void setStartsAt(LocalDateTime startsAt) {
-        var now = LocalDateTime.now();
-        if (startsAt == null || startsAt.isBefore(now))
-            this.startsAt = now;
-        else
-            this.startsAt = startsAt;
-    }
 
     public Long getTotalVotes(){
         if(hasStarted())
@@ -88,7 +81,11 @@ public class VotingSession {
         return ResultType.DRAW;
     }
 
-    public Boolean hasAssociateVoted(Associate associate){
+    public Boolean hasVoted(Associate associate){
         return votes.stream().anyMatch(vote -> vote.hasAssociate(associate.getId()));
+    }
+
+    public Boolean hasAssociate(Associate associate){
+        return this.agenda.hasAssociate(associate.getId());
     }
 }

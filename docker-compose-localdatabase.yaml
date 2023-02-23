@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+    environment:
+      SERVER_INTERNAL_PORT: ${SERVER_INTERNAL_PORT}
+      SERVER_ENTERNAL_PORT: ${SERVER_EXTERNAL_PORT}
+      CONTEXT_PATH: ${CONTEXT_PATH}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_INTERNAL_PORT: ${POSTGRES_INTERNAL_PORT}
+      SPRING_PROFILES_ACTIVE: 'production'
+      TZ: ${TZ}
+    ports:
+      -  ${SERVER_INTERNAL_PORT}:${SERVER_EXTERNAL_PORT}

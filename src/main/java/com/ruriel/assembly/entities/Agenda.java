@@ -47,6 +47,8 @@ public class Agenda {
     public Boolean hasAssociate(Long associateId) {
         return associates.stream().anyMatch(associate -> Objects.equals(associate.getId(), associateId));
     }
-    
 
+    public Boolean hasNoAssociates(){
+        return associates == null || associates.isEmpty();
+    }
 }
