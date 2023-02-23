@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.ruriel.assembly.api.exceptions.messages.AgendaMessages.AGENDA_NOT_FOUND;
 import static com.ruriel.assembly.api.exceptions.messages.VotingSessionMessages.VOTING_IS_FINISHED;
@@ -39,10 +37,6 @@ public class AgendaService {
 
 	public Page<Agenda> findPage(Pageable pageable) {
 		return agendaRepository.findByEnabled(true, pageable);
-	}
-
-	public Set<Agenda> findAllById(Set<Long> ids) {
-		return new HashSet<>(agendaRepository.findAllById(ids));
 	}
 
 	public Agenda create(Agenda agenda) {

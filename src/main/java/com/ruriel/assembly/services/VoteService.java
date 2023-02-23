@@ -23,7 +23,6 @@ public class VoteService {
     private final VotingSessionRepository votingSessionRepository;
 
     private void checkVotingSession(VotingSession votingSession, Associate associate){
-        var agenda = votingSession.getAgenda();
         if (!votingSession.hasStarted()) {
             var message = String.format(VOTING_HAS_NOT_STARTED, votingSession.getId());
             throw new VotingHasNotStartedException(message);
@@ -32,7 +31,7 @@ public class VoteService {
             var message = String.format(VOTING_IS_FINISHED, votingSession.getId());
             throw new VotingIsFinishedException(message);
         }
-        if(Boolean.FALSE.equals(agenda.hasAssociate(associate.getId()))) {
+        if(Boolean.FALSE.equals(votingSession.hasAssociate(associate))) {
             var message = String.format(ASSOCIATE_NOT_REGISTERED, associate.getId());
             throw new AssociateNotRegisteredInAgendaException(message);
         }
@@ -51,7 +50,7 @@ public class VoteService {
         var now = LocalDateTime.now();
         var associate = vote.getAssociate();
         var votingSession = findVotingSession(votingSessionId, associate);
-        if(Boolean.TRUE.equals(votingSession.hasAssociateVoted(associate))) {
+        if(votingSession.hasVoted(associate)) {
             var message = String.format(ASSOCIATED_VOTED_ALREADY, associate.getId());
             throw new AssociateAlreadyVotedException(message);
         }
