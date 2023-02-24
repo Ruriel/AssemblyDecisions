@@ -44,7 +44,7 @@ public class VotingSessionService {
             var message = String.format(AGENDA_HAS_NO_ASSOCIATES_EXCEPTION, id);
             throw new AgendaHasNoAssociatesException(message);
         }
-        return agenda;
+        return foundAgenda;
     }
 
     private void checkVotingSession(VotingSession votingSession) {

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Pageable;
@@ -19,16 +20,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/associate", produces = "application/vnd.assembly.api.v1+json")
 @RequiredArgsConstructor
+@Slf4j
 public class AssociateController {
 
-
-	
     private final AssociateService associateService;
 
     private final ModelMapper modelMapper;
 
     @GetMapping
     public ResponseEntity<PaginatedResponse<AssociateResponse>> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
+        log.trace("GET /associate");
+        log.trace(pageable.toString());
         var page = associateService.findPage(pageable);
         var typeToken = new TypeToken<PaginatedResponse<AssociateResponse>>() {
         }.getType();
@@ -39,6 +41,7 @@ public class AssociateController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AssociateDetailedResponse> findById(@PathVariable Long id) {
+        log.trace("GET /associate/" + id);
         var associate = associateService.findById(id);
         var associateResponse = modelMapper.map(associate, AssociateDetailedResponse.class);
         return ResponseEntity.ok(associateResponse);
@@ -46,6 +49,7 @@ public class AssociateController {
 
     @PostMapping
     public ResponseEntity<AssociateDetailedResponse> create(@RequestBody @Valid AssociateRequest associateRequest) {
+        log.trace("POST /associate: "+ associateRequest.toString());
         var associate = modelMapper.map(associateRequest, Associate.class);
         var savedAssociate = associateService.create(associate);
         var responseBody = modelMapper.map(savedAssociate, AssociateDetailedResponse.class);
@@ -54,16 +58,11 @@ public class AssociateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AssociateDetailedResponse> update(@PathVariable Long id, @RequestBody @Valid AssociateRequest associateRequest) {
+        log.trace(String.format("PUT /associate/%d: %s", id, associateRequest.toString()));
         var associate = modelMapper.map(associateRequest, Associate.class);
         var updatedAssociate = associateService.update(id, associate);
         var responseBody = modelMapper.map(updatedAssociate, AssociateDetailedResponse.class);
         return ResponseEntity.ok(responseBody);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<AssociateDetailedResponse> disable(@PathVariable Long id) {
-        var associate = associateService.disable(id);
-        var responseBody = modelMapper.map(associate, AssociateDetailedResponse.class);
-        return ResponseEntity.ok(responseBody);
-    }
 }

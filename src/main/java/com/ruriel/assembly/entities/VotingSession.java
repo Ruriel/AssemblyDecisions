@@ -28,10 +28,10 @@ public class VotingSession {
 
     @Column
     private LocalDateTime updatedAt;
-    @OneToOne(mappedBy = "votingSession", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "votingSession", cascade = CascadeType.MERGE, optional = false, fetch = FetchType.LAZY)
     private Agenda agenda;
 
-    @OneToMany(mappedBy = "votingSession")
+    @OneToMany(mappedBy = "votingSession", fetch = FetchType.LAZY)
     private Set<Vote> votes;
 
     public void setAgenda(Agenda agenda){

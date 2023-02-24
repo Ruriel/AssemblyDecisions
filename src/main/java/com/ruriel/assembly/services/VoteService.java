@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATED_VOTED_ALREADY;
-import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.ASSOCIATE_NOT_REGISTERED;
+import static com.ruriel.assembly.api.exceptions.messages.AssociateMessages.*;
 import static com.ruriel.assembly.api.exceptions.messages.VotingSessionMessages.*;
 
 @Service
@@ -50,7 +49,7 @@ public class VoteService {
         var now = LocalDateTime.now();
         var associate = vote.getAssociate();
         var votingSession = findVotingSession(votingSessionId, associate);
-        if(votingSession.hasVoted(associate)) {
+        if(Boolean.TRUE.equals(votingSession.hasVoted(associate))) {
             var message = String.format(ASSOCIATED_VOTED_ALREADY, associate.getId());
             throw new AssociateAlreadyVotedException(message);
         }

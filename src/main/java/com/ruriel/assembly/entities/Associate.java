@@ -31,7 +31,7 @@ public class Associate {
 
 	private LocalDateTime updatedAt;
 
-	@ManyToMany(mappedBy = "associates")
+	@ManyToMany(mappedBy = "associates", fetch = FetchType.LAZY)
 	private Set<Agenda> agendas;
 	
 }
