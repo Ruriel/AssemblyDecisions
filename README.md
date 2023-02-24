@@ -1,6 +1,6 @@
 # Getting Started
 ### Introduction
-This is a simples Spring Boot application that simulates voting sessions.
+This is a simple Spring Boot application that simulates voting sessions.
 
 ### Environment Variables
 You can change the values of the .env file to run the application in a different context or port.
