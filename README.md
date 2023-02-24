@@ -20,6 +20,7 @@ The variables are:
 ### Requirements
     Java 17.0.6
     Docker 20.10.22 (for production only)
+    Postgres 15.2 or compatible
 ### How to run
 To run the application in production mode, you have to run the following command:
 ```
