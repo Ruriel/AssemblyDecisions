@@ -28,7 +28,7 @@ class AssociateServiceTests {
     void shouldFindPage(){
         var pageable = PageRequest.of(0, 5);
         associateService.findPage(pageable);
-        verify(associateRepository).findByEnabled(true, pageable);
+        verify(associateRepository).findAll(pageable);
     }
 
     @Test
@@ -71,12 +71,4 @@ class AssociateServiceTests {
         verify(associateRepository).save(currentAssociate);
     }
 
-    @Test
-    void shouldDisable(){
-        var id = 1L;
-        var currentAssociate = Associate.builder().id(id).enabled(true).build();
-        when(associateRepository.findById(id)).thenReturn(Optional.of(currentAssociate));
-        associateService.disable(1L);
-        verify(associateRepository).save(currentAssociate);
-    }
 }

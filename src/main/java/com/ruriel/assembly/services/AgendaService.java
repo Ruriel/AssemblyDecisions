@@ -68,6 +68,7 @@ public class AgendaService {
 	public Agenda disable(Long id) {
 		var now = LocalDateTime.now();
 		var current = findById(id);
+		checkVotingSession(current.getVotingSession());
 		current.setEnabled(false);
 		current.setUpdatedAt(now);
 		return agendaRepository.save(current);

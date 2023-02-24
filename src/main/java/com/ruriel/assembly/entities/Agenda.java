@@ -27,11 +27,11 @@ public class Agenda {
     @Column(nullable=false)
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voting_session_id")
     private VotingSession votingSession;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "associates_agendas",
             joinColumns = @JoinColumn(name = "agenda_id"),
             inverseJoinColumns = @JoinColumn(name = "associate_id"))

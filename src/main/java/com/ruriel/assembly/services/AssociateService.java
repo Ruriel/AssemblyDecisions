@@ -20,7 +20,7 @@ public class AssociateService {
     private final AssociateRepository associateRepository;
 
     public Page<Associate> findPage(Pageable pageable) {
-        return associateRepository.findByEnabled(true, pageable);
+        return associateRepository.findAll(pageable);
     }
 
     public Set<Associate> findAllById(Set<Long> ids) {
@@ -51,11 +51,4 @@ public class AssociateService {
         return associateRepository.save(current);
     }
 
-    public Associate disable(Long id) {
-        var now = LocalDateTime.now();
-        var current = findById(id);
-        current.setEnabled(false);
-        current.setUpdatedAt(now);
-        return associateRepository.save(current);
-    }
 }

@@ -33,5 +33,6 @@ services:
       POSTGRES_INTERNAL_PORT: ${POSTGRES_INTERNAL_PORT}
       SPRING_PROFILES_ACTIVE: 'production'
       TZ: ${TZ}
+      LOG_FOLDER: ${LOG_FOLDER}
     ports:
       -  ${SERVER_INTERNAL_PORT}:${SERVER_EXTERNAL_PORT}

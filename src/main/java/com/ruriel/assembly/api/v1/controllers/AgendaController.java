@@ -9,6 +9,7 @@ import com.ruriel.assembly.services.AgendaService;
 import com.ruriel.assembly.services.AssociateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/agenda", produces = "application/vnd.assembly.api.v1+json")
 @RequiredArgsConstructor
+@Slf4j
 public class AgendaController {
     private final AgendaService agendaService;
 
@@ -29,6 +31,8 @@ public class AgendaController {
 
     @GetMapping
     public ResponseEntity<PaginatedResponse<AgendaResponse>> findPage(@PageableDefault(sort = {"createdAt"}) Pageable pageable) {
+        log.trace("GET /agenda");
+        log.trace(pageable.toString());
         var page = agendaService.findPage(pageable);
         var typeToken = new TypeToken<PaginatedResponse<AgendaResponse>>() {
         }.getType();
@@ -38,6 +42,7 @@ public class AgendaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AgendaDetailedResponse> findById(@PathVariable Long id) {
+        log.trace("GET /agenda/" + id);
         var agenda = agendaService.findById(id);
         var agendaResponse = modelMapper.map(agenda, AgendaDetailedResponse.class);
         return ResponseEntity.ok(agendaResponse);
@@ -45,6 +50,7 @@ public class AgendaController {
 
     @PostMapping
     public ResponseEntity<AgendaDetailedResponse> create(@RequestBody @Valid AgendaRequest agendaRequest) {
+        log.trace("POST /agenda: "+ agendaRequest.toString());
         var associates = associateService.findAllById(agendaRequest.getAssociateIds());
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         agenda.setAssociates(associates);
@@ -55,6 +61,7 @@ public class AgendaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AgendaDetailedResponse> update(@PathVariable Long id, @RequestBody @Valid AgendaRequest agendaRequest) {
+        log.trace(String.format("PUT /agenda/%d: %s", id, agendaRequest.toString()));
         var associates = associateService.findAllById(agendaRequest.getAssociateIds());
         var agenda = modelMapper.map(agendaRequest, Agenda.class);
         agenda.setAssociates(associates);
@@ -65,6 +72,7 @@ public class AgendaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<AgendaDetailedResponse> disable(@PathVariable Long id) {
+        log.trace("DELETE /agenda/" + id);
         var agenda = agendaService.disable(id);
         var responseBody = modelMapper.map(agenda, AgendaDetailedResponse.class);
         return ResponseEntity.ok(responseBody);

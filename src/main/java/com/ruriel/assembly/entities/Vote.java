@@ -20,14 +20,14 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "associate_id", nullable=false)
     private Associate associate;
 
     @Column(nullable = false)
     private Boolean content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="voting_session_id", nullable=false)
     private VotingSession votingSession;
 

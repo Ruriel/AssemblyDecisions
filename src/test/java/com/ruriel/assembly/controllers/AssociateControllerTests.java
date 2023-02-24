@@ -61,10 +61,4 @@ class AssociateControllerTests {
         verify(associateService).update(id, associate);
     }
 
-    @Test
-    void shouldDisable() {
-        var id = 1L;
-        associateController.disable(id);
-        verify(associateService).disable(id);
-    }
 }
